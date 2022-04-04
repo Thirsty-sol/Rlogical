@@ -29,6 +29,8 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const googleProvider = new GoogleAuthProvider();
+let user = null;
+
 const signInWithGoogle = async () => {
     try {
         const res = await signInWithPopup(auth, googleProvider);
@@ -50,15 +52,20 @@ const signInWithGoogle = async () => {
 };
 const logInWithEmailAndPassword = async (email, password) => {
     try {
-        await signInWithEmailAndPassword(auth, email, password);
+        await signInWithEmailAndPassword(auth, email.userName, email.password);
+        user = await auth.currentUser.getIdToken();
+        window.localStorage.setItem('user', user);
+        window.location.href = '/';
+        // console.log("app  ", await auth.currentUser.getIdToken())
     } catch (err) {
         console.error(err);
         alert(err.message);
+        return err;
     }
 };
 const registerWithEmailAndPassword = async (name, email, password) => {
     try {
-        const res = await createUserWithEmailAndPassword(auth, email, password);
+        const res = await createUserWithEmailAndPassword(auth, email.userName, email.password);
         const user = res.user;
         await addDoc(collection(db, "users"), {
             uid: user.uid,
@@ -91,4 +98,5 @@ export {
     registerWithEmailAndPassword,
     sendPasswordReset,
     logout,
+    user
 };

@@ -4,18 +4,18 @@ import Navbar from './components/Navbar';
 import Home from './components/Home';
 import Cart from './components/Cart';
 import Login from './components/Login';
-
 class App extends Component {
+  
   render() {
+    const userLogin = window.localStorage.getItem('user') ? true : false;
     return (
       <BrowserRouter>
         <div className="App">
-
-          <Navbar />
+          <Navbar user={userLogin} />
           <Switch>
             <Route exact path="/" component={Home} />
             <Route path="/cart" component={Cart} />
-            <Route path="/login" component={Login} />
+            {!userLogin ? <Route path="/login" component={Login} /> : null}
           </Switch>
         </div>
       </BrowserRouter>
@@ -23,5 +23,4 @@ class App extends Component {
     );
   }
 }
-
 export default App;
